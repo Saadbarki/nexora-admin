@@ -1,0 +1,36 @@
+services:
+  nexora-db:
+    image: mongo:latest
+    container_name: nexora-db
+    restart: always
+    volumes:
+      - nexora-data:/data/db
+
+  nexora-backend:
+    build: ./backend
+    container_name: nexora-backend
+    restart: always
+    environment:
+      - DATABASE=mongodb://nexora-db:27017/nexora
+      - MONGODB_URI=mongodb://nexora-db:27017/nexora
+      - JWT_SECRET=nexora_dev_secret_999
+      - PORT=8888
+    ports:
+      - "8888:8888"
+    depends_on:
+      - nexora-db
+
+  nexora-frontend:
+    build:
+      context: ./frontend
+      args:
+        - VITE_BACKEND_SERVER=http://localhost:8888/
+    container_name: nexora-frontend
+    restart: always
+    ports:
+      - "3030:80"
+    depends_on:
+      - nexora-backend
+
+volumes:
+  nexora-data:

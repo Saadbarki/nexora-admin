@@ -1,0 +1,17 @@
+# Dependency folders
+node_modules/
+bower_components/
+
+# Docker data (Important: Don't push your actual database!)
+mongodb_data/
+mysql_data/
+
+# Secrets
+.env
+*.env
+.env.local
+
+# Build files
+dist/
+build/
+.DS_Store
