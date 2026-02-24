@@ -2,8 +2,9 @@ name: github-repo-stats
 
 on:
   schedule:
+    # Runs at 23:50 UTC every day
     - cron: "50 23 * * *"
-  workflow_dispatch: # This lets you start it manually!
+  workflow_dispatch: # Allows you to run this manually from the Actions tab
 
 jobs:
   j1:
@@ -15,4 +16,4 @@ jobs:
         with:
           repository: Saadbarki/nexora-admin
           databranch: github-repo-stats
-          ghtoken: ${{ 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 }}
+          ghtoken: ${{ secrets.GHRS_GITHUB_API_TOKEN }}
