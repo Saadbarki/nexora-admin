@@ -14,6 +14,7 @@ services:
       - DATABASE=mongodb://nexora-db:27017/nexora
       - MONGODB_URI=mongodb://nexora-db:27017/nexora
       - JWT_SECRET=nexora_dev_secret_999
+      - SECRET=another_dev_secret_123
       - PORT=8888
     ports:
       - "8888:8888"
@@ -24,6 +25,7 @@ services:
     build:
       context: ./frontend
       args:
+        # We removed 'api/' from the end to fix the 404 double-prefix error
         - VITE_BACKEND_SERVER=http://localhost:8888/
     container_name: nexora-frontend
     restart: always

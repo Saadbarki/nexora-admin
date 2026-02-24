@@ -1,23 +1,24 @@
 const create = async (Model, req, res) => {
-  try {
-    req.body.removed = false;
-    const result = await new Model({
-      ...req.body,
-    }).save();
+  console.log("🚀 CREATE REQUEST RECEIVED FOR MODEL:", Model.modelName);
+  console.log("📦 BODY DATA:", req.body);
 
+  try {
+    const result = await new Model(req.body).save();
+    console.log("✅ SAVE SUCCESSFUL");
     return res.status(200).json({
       success: true,
       result,
       message: 'Successfully Created',
     });
-  } catch (error) {
-    // THIS LINE IS THE KEY: It will print the exact error to your terminal
-    console.error("!!! DATABASE VALIDATION ERROR !!!", error);
-    
-    return res.status(400).json({
+  } catch (err) {
+    console.error("❌ DATABASE SAVE ERROR:", err.message); // THIS IS THE LINE WE NEED
+    return res.status(500).json({
       success: false,
-      message: error.message,
-      stack: error
+      result: null,
+      message: 'Oops there is an Error',
+      error: err.message,
     });
   }
 };
+
+module.exports = create;
