@@ -1,38 +1,35 @@
-services:
-  nexora-db:
-    image: mongo:latest
-    container_name: nexora-db
-    restart: always
-    volumes:
-      - nexora-data:/data/db
+version: '3.8'
 
-  nexora-backend:
-    build: ./backend
-    container_name: nexora-backend
+services:
+  database:
+    image: mongo:latest
     restart: always
     environment:
-      - DATABASE=mongodb://nexora-db:27017/nexora
-      - MONGODB_URI=mongodb://nexora-db:27017/nexora
-      - JWT_SECRET=nexora_dev_secret_999
-      - SECRET=another_dev_secret_123
-      - PORT=8888
-    ports:
-      - "8888:8888"
-    depends_on:
-      - nexora-db
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=nexora_secure_password
+    volumes:
+      - mongo_data:/data/db
 
-  nexora-frontend:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    restart: always
+    environment:
+      - DATABASE=mongodb://admin:nexora_secure_password@database:27017/nexora-admin?authSource=admin
+      - NODE_ENV=production
+    depends_on:
+      - database
+
+  frontend:
     build:
       context: ./frontend
-      args:
-        # We removed 'api/' from the end to fix the 404 double-prefix error
-        - VITE_BACKEND_SERVER=http://localhost:8888/
-    container_name: nexora-frontend
+      dockerfile: Dockerfile.prod
     restart: always
     ports:
-      - "3030:80"
+      - "80:80"
     depends_on:
-      - nexora-backend
+      - backend
 
 volumes:
-  nexora-data:
+  mongo_data:
